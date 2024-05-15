@@ -1,0 +1,21 @@
+{
+"listenerPath": "String",
+"rawRequestPath": "String",
+"relativePath": "String",
+"maskedRequestPath": "String",
+"version": "String",
+"scheme": "String",
+"method": "String",
+"requestUri": "String",
+"rawRequestUri": "String",
+"queryString": "String",
+"localAddress": "String",
+"remoteAddress": "String",
+"clientCertificate":{
+	"encoded": "Binary?",
+	"publicKey": "Object?",
+	"type": "String?"},
+"queryParams": "Object",
+"uriParams": "Object",
+"requestPath": "String",
+"headers": "Object"}

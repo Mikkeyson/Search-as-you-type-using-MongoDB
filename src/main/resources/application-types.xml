@@ -1,0 +1,34 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<types:mule xmlns:types="http://www.mulesoft.org/schema/mule/types">
+  <types:catalog>
+    <types:type name="json" format="json">
+      <types:shape format="weave" example="examples/json.json"><![CDATA[%dw 2.0
+
+type json = {|
+  listenerPath: String, 
+  rawRequestPath: String, 
+  relativePath: String, 
+  maskedRequestPath: String, 
+  version: String, 
+  scheme: String, 
+  method: String, 
+  requestUri: String, 
+  rawRequestUri: String, 
+  queryString: String, 
+  localAddress: String, 
+  remoteAddress: String, 
+  clientCertificate: {|
+    encoded: String, 
+    publicKey: String, 
+    "type": String
+  |}, 
+  queryParams: String, 
+  uriParams: String, 
+  requestPath: String, 
+  headers: String
+|} {"example": "{\\\"listenerPath\\\":\\\"String\\\",\\\"rawRequestPath\\\":\\\"String\\\",\\\"relativePath\\\":\\\"String\\\",\\\"maskedRequestPath\\\":\\\"String\\\",\\\"version\\\":\\\"String\\\",\\\"scheme\\\":\\\"String\\\",\\\"method\\\":\\\"String\\\",\\\"requestUri\\\":\\\"String\\\",\\\"rawRequestUri\\\":\\\"String\\\",\\\"queryString\\\":\\\"String\\\",\\\"localAddress\\\":\\\"String\\\",\\\"remoteAddress\\\":\\\"String\\\",\\\"clientCertificate\\\":{\\\"encoded\\\":\\\"Binary?\\\",\\\"publicKey\\\":\\\"Object?\\\",\\\"type\\\":\\\"String?\\\"},\\\"queryParams\\\":\\\"Object\\\",\\\"uriParams\\\":\\\"Object\\\",\\\"requestPath\\\":\\\"String\\\",\\\"headers\\\":\\\"Object\\\"}"}
+
+]]></types:shape>
+    </types:type>
+  </types:catalog>
+</types:mule>

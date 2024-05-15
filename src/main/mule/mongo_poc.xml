@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:graphql-router="http://www.mulesoft.org/schema/mule/graphql-router" xmlns:module-grip-cloudidp-connector="http://www.mulesoft.org/schema/mule/module-grip-cloudidp-connector"
+	xmlns:api-gateway="http://www.mulesoft.org/schema/mule/api-gateway"
+	xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:mongo="http://www.mulesoft.org/schema/mule/mongo" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/mongo http://www.mulesoft.org/schema/mule/mongo/current/mule-mongo.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/api-gateway http://www.mulesoft.org/schema/mule/api-gateway/current/mule-api-gateway.xsd
+http://www.mulesoft.org/schema/mule/module-grip-cloudidp-connector http://www.mulesoft.org/schema/mule/module-grip-cloudidp-connector/current/mule-module-grip-cloudidp-connector.xsd
+http://www.mulesoft.org/schema/mule/graphql-router http://www.mulesoft.org/schema/mule/graphql-router/current/mule-graphql-router.xsd">
+	<mongo:config name="MongoDB_Config" doc:name="MongoDB Config" doc:id="461258f0-837c-419c-9484-c3e7c32601e0" >
+		<mongo:connection-string-connection connectionString="mongodb+srv://mihaitaanghelescu:ZuTv6yDcrp0fDVjs@cluster0.ohswptr.mongodb.net/sample_mflix" />
+	</mongo:config>
+	<http:listener-config name="HTTP_Listener_config" doc:name="HTTP Listener config" doc:id="2829663c-079c-4b41-8627-a35cea807bbf" >
+		<http:listener-connection host="0.0.0.0" port="8081" />
+	</http:listener-config>
+	<flow name="mongo_testFlow2" doc:id="cb2c7d31-691f-4f05-913a-eaa3005c41a8" >
+		<http:listener doc:name="Listener" doc:id="8ad54ab0-b5a6-4799-955c-4cd1e6814068" config-ref="HTTP_Listener_config" path="/test">
+			<http:response >
+				<http:body ><![CDATA[#[output application/json --- payload]]]></http:body>
+			</http:response>
+		</http:listener>
+		<choice doc:name="Choice" doc:id="bff4789c-24ba-44d4-b5f0-31bd6b3bf103" >
+			<when expression="#[payload.Search[0].Key2 == null]">
+				<ee:transform doc:name="query formation with 1 key" doc:id="701f0783-ce8c-40ad-a1ae-75bfe0026a1a">
+			<ee:message>
+				<ee:set-payload><![CDATA[%dw 2.0
+output application/json
+
+var key = (payload.Search[0].Key)
+var value = (payload.Search[0].Value)
+---
+(key): {
+        "\$regex": "^" ++ value,
+        "\$options": "i"
+    }
+
+]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+				<mongo:find-documents doc:name="Find documents" doc:id="b3ce6883-e8cd-46a5-b014-29e06aacd314" config-ref="MongoDB_Config" collectionName="movies" fields=",">
+			<mongo:query><![CDATA[#[payload]]]></mongo:query>
+		</mongo:find-documents>
+				<ee:transform doc:name="payload transform" doc:id="76431fe6-8ed1-40fe-92d4-84d87941aeaf">
+			<ee:message>
+				<ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{
+"_id": payload."_id"."\$oid",
+"title": payload.title,
+"released": payload.released
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+			</when>
+			<otherwise >
+				<ee:transform doc:name="query formation with 2 keys" doc:id="6e000a03-1524-4637-8b5b-ed40340903f8">
+			<ee:message>
+				<ee:set-payload><![CDATA[%dw 2.0
+output application/json
+
+var key = (payload.Search[0].Key)
+var value = (payload.Search[0].Value)
+var key2 = if(sizeOf(payload.Search[0].Key2) >1) payload.Search[0].Key2 else null
+var value2 = if(sizeOf(payload.Search[0].Value2) >1) payload.Search[0].Value2 else null
+
+---
+{
+(key): {
+        "\$regex": "^" ++ value,
+        "\$options": "i"
+    },
+
+(key2): {
+        "\$regex": "^" ++ value2,
+        "\$options": "i"
+    }
+}
+    
+    ]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+				<mongo:find-documents doc:name="Find documents" doc:id="8dd780b9-4c2f-447e-b0e8-0ce1fac3dca5" config-ref="MongoDB_Config" collectionName="movies" fields=",">
+					<mongo:query ><![CDATA[#[payload]]]></mongo:query>
+				</mongo:find-documents>
+				<ee:transform doc:name="payload transform" doc:id="89ebd625-6c1b-4684-ada8-7ba26932a9d2" >
+					<ee:message >
+						<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+payload map ((item, index) -> 
+
+{
+    "_id": item."_id"."\$oid",
+    "title": item.title,
+    "released": item.released
+}
+)]]></ee:set-payload>
+					</ee:message>
+				</ee:transform>
+			</otherwise>
+		</choice>
+		<logger level="INFO" doc:name="Logger" doc:id="a052ad72-cf0d-4f29-abef-b13872038cd4" message='#[payload]'/>
+	</flow>
+</mule>
