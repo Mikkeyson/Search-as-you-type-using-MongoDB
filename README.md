@@ -45,11 +45,15 @@ The API is configured to retrieve records based on the number of Keys provided b
 The application determines in the Choice router whether the user has sent 1 or 2 keys by validating the following condition: **payload.Search[0].Key2 == null**
 Based on the evaluation, it will follow a certain path, as described below. 
 
+
+
 # Path 1 - Query formation with 1 key
+
 
 **Request body** 
 
 ![1key](https://github.com/Mikkeyson/Search-as-you-type-using-MongoDB/assets/169890397/8bb56422-9537-453e-86ee-96a038f70d76)
+
 
 **The script**
 
@@ -66,6 +70,7 @@ Based on the evaluation, it will follow a certain path, as described below.
                         "\$options": "i": 
                                     "\$options" specifies options for the regex.
                                     "i" makes the regex case-insensitive.
+                                    
 
 The **Find Documents** connector is configured with the following values:
         
@@ -74,6 +79,7 @@ The **Find Documents** connector is configured with the following values:
         Collection name: Movies
         
         Fields: , (the comma retrieves all the fields available)
+        
 
 The **Transform Message** component works with the data retrieved just for demonstration purposes. 
     That's how the actual data looks in the database:
@@ -84,9 +90,11 @@ The **Transform Message** component works with the data retrieved just for demon
 
 ![PayloadTransformation1](https://github.com/Mikkeyson/Search-as-you-type-using-MongoDB/assets/169890397/a35a3668-e816-437f-b18c-ab62805839a9)
 
+
 **Response**
 
 ![Response1](https://github.com/Mikkeyson/Search-as-you-type-using-MongoDB/assets/169890397/bd07151a-9885-4cb7-97f2-59ec6a23cc57)
+
 
 Changing the Value in the Request Body to "Great Ba": 
 
@@ -96,25 +104,33 @@ Changing the Value in the Request Body to "Great Ba":
 
 It now retrieves the only records that matches the condition.
 
+
+
 # Path 2 - Query formation with 2 keys
+
 
 **The script** is similar, but this time it creates the Regex pattern for 2 keys.
 
 ![script2keys](https://github.com/Mikkeyson/Search-as-you-type-using-MongoDB/assets/169890397/99c075cd-232a-4263-babc-2b9c5cf587c2)
 
+
 **Request body**
 
 ![RequestBody2](https://github.com/Mikkeyson/Search-as-you-type-using-MongoDB/assets/169890397/4baf166f-e608-4a6a-8285-c28df7e8363f)
 
+
 The **Find Documents** connector uses the same configuration as above.
+
 
 The **Transform Message** uses a Map function to group the records, as shown below:
 
 ![payloadTransformation2](https://github.com/Mikkeyson/Search-as-you-type-using-MongoDB/assets/169890397/c4032ee1-9517-4ca1-b62d-b37f4d8f520e)
 
+
 **Response**
 
 ![Response3](https://github.com/Mikkeyson/Search-as-you-type-using-MongoDB/assets/169890397/bf4e1ccd-b7d4-4dc2-a47d-ddd2aa6c641e)
+
 
 
 # POC limitations: 
