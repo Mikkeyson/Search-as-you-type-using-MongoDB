@@ -10,7 +10,7 @@ To ease reading through the document, here is the list of contents:
 4. [Query formation with 2 keys](doc:linking-to-pages#Path-2-Query-formation-with-2-keys)
 5. [POC limitations](doc:linking-to-pages#POC-limitations)
 
-## MongoDB setup
+# MongoDB setup
 
 1. Unless you're using a project-provided infrastructure, you'll need to sign up to MongoDB here: https://www.mongodb.com/ .
 2. Set up your Cluster by choosing the free option.
@@ -18,7 +18,7 @@ To ease reading through the document, here is the list of contents:
 4. Set up the Database Access and configure your own user & password (store the password in a separate document as you'll need it later).
 5. You can navigate to Collections to see the list of predefined collections provided by Mongo. The sample_mflix connection has been used for this POC.
 
-## Mulesoft setup
+# Mulesoft setup
 
 1. Add the MongoDB connector from Exchange.
    
@@ -45,7 +45,7 @@ The API is configured to retrieve records based on the number of Keys provided b
 The application determines in the Choice router whether the user has sent 1 or 2 keys by validating the following condition: **payload.Search[0].Key2 == null**
 Based on the evaluation, it will follow a certain path, as described below. 
 
-## Path 1 - Query formation with 1 key
+# Path 1 - Query formation with 1 key
 
 **Request body** 
 
@@ -68,8 +68,11 @@ Based on the evaluation, it will follow a certain path, as described below.
                                     "i" makes the regex case-insensitive.
 
 The **Find Documents** connector is configured with the following values:
+        
         Query: Payload
+        
         Collection name: Movies
+        
         Fields: , (the comma retrieves all the fields available)
 
 The **Transform Message** component works with the data retrieved just for demonstration purposes. 
@@ -93,7 +96,7 @@ Changing the Value in the Request Body to "Great Ba":
 
 It now retrieves the only records that matches the condition.
 
-## Path 2 - Query formation with 2 keys
+# Path 2 - Query formation with 2 keys
 
 **The script** is similar, but this time it creates the Regex pattern for 2 keys.
 
@@ -114,7 +117,7 @@ The **Transform Message** uses a Map function to group the records, as shown bel
 ![Response3](https://github.com/Mikkeyson/Search-as-you-type-using-MongoDB/assets/169890397/bf4e1ccd-b7d4-4dc2-a47d-ddd2aa6c641e)
 
 
-## POC limitations: 
+# POC limitations: 
 
 1. The search function works for String values (for "Value" field in the Request Body) within the database. As noticed below, the collection may include Object and Arrays as well.
 
